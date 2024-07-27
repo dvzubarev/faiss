@@ -42,6 +42,7 @@ struct IndexQINCo : IndexNeuralNetCodec {
             int L,
             int h,
             MetricType metric = METRIC_L2);
+    IndexQINCo();
 
     ~IndexQINCo() {}
 };

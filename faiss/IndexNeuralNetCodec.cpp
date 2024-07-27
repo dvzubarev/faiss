@@ -52,5 +52,6 @@ IndexQINCo::IndexQINCo(int d, int M, int nbits, int L, int h, MetricType metric)
           qinco(d, 1 << nbits, L, M, h) {
     net = &qinco;
 }
+IndexQINCo::IndexQINCo():IndexQINCo(0,0,0,0,0){}
 
 } // namespace faiss
