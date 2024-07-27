@@ -31,6 +31,12 @@ struct Tensor2DTemplate {
     /// get column #j as a 1-column Tensor2D
     Tensor2DTemplate column(size_t j) const;
 
+    void scale(float scale){
+        for (T& val: v){
+            val *= scale;
+        }
+    }
+
     size_t numel() const {
         return shape[0] * shape[1];
     }
