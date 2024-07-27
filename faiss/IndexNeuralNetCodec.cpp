@@ -22,7 +22,8 @@ IndexNeuralNetCodec::IndexNeuralNetCodec(
         MetricType metric)
         : IndexFlatCodes((M_in * nbits_in + 7) / 8, d_in, metric),
           M(M_in),
-          nbits(nbits_in) {
+          nbits(nbits_in),
+          db_scale(1){
     is_trained = false;
 }
 
@@ -33,6 +34,8 @@ void IndexNeuralNetCodec::train(idx_t /*n*/, const float* /*x*/) {
 void IndexNeuralNetCodec::sa_encode(idx_t n, const float* x, uint8_t* bytes)
         const {
     nn::Tensor2D x_tensor(n, d, x);
+    x_tensor.scale(1.0/db_scale);
+
     nn::Int32Tensor2D codes_tensor = net->encode(x_tensor);
     pack_bitstrings(
             n,
@@ -54,6 +57,7 @@ void IndexNeuralNetCodec::sa_decode(idx_t n, const uint8_t* bytes, float* x)
             code_size,
             codes_tensor.data());
     nn::Tensor2D x_tensor = net->decode(codes_tensor);
+    x_tensor.scale(db_scale);
     memcpy(x, x_tensor.data(), d * n * sizeof(float));
 }
 

@@ -1856,6 +1856,7 @@ std::unique_ptr<Index> read_index_up(IOReader* f, int io_flags) {
         read_index_header(*qinco, f);
         READ1(qinco->M);
         READ1(qinco->nbits);
+        READ1(qinco->db_scale);
         read_Qinco(&qinco->qinco, f);
         READ1(qinco->code_size);
         READVECTOR(qinco->codes);

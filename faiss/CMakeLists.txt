@@ -253,6 +253,7 @@ set(FAISS_HEADERS
   IndexIVFPQR.h
   IndexIVFRaBitQ.h
   IndexIVFRaBitQFastScan.h
+  IndexNeuralNetCodec.h
   IndexIVFSpectralHash.h
   IndexLSH.h
   IndexNeuralNetCodec.h
@@ -415,6 +416,7 @@ set(FAISS_HEADERS
   utils/simd_impl/super_kmeans_kernels.h
   utils/simd_impl/IVFFlatScanner-inl.h
   utils/simd_impl/distances_sse-inl.h
+  utils/NeuralNet.h
 )
 
 if(FAISS_ENABLE_SVS)
