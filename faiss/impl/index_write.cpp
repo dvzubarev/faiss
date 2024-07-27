@@ -45,6 +45,7 @@
 #include <faiss/IndexScalarQuantizer.h>
 #include <faiss/MetaIndexes.h>
 #include <faiss/VectorTransform.h>
+#include <faiss/IndexNeuralNetCodec.h>
 
 #include <faiss/IndexBinaryFlat.h>
 #include <faiss/IndexBinaryFromFloat.h>
@@ -218,6 +219,50 @@ static void write_ProductResidualQuantizer(
     for (const auto aq : prq->quantizers) {
         auto rq = dynamic_cast<const ResidualQuantizer*>(aq);
         write_ResidualQuantizer(rq, f);
+    }
+}
+static void write_Embedding(
+        const nn::Embedding* emb,
+        IOWriter* f) {
+
+    WRITE1(emb->num_embeddings);
+    WRITE1(emb->embedding_dim);
+    WRITEVECTOR(emb->weight);
+}
+static void write_Linear(
+        const nn::Linear* linear,
+        IOWriter* f) {
+
+    WRITE1(linear->in_features);
+    WRITE1(linear->out_features);
+    WRITEVECTOR(linear->weight);
+    WRITEVECTOR(linear->bias);
+}
+static void write_FFN(
+        const nn::FFN* ffn,
+        IOWriter* f) {
+
+    write_Linear(&ffn->linear1, f);
+    write_Linear(&ffn->linear2, f);
+}
+
+static void write_Qinco(
+        const QINCo* qinco,
+        IOWriter* f) {
+
+    WRITE1(qinco->K);
+    WRITE1(qinco->L);
+    WRITE1(qinco->h);
+    WRITE1(qinco->d);
+    WRITE1(qinco->M);
+    write_Embedding(&qinco->codebook0, f);
+
+    for (const auto step : qinco->steps) {
+        write_Embedding(&step.codebook, f);
+        write_Linear(&step.MLPconcat, f);
+        for (const auto ffn : step.residual_blocks){
+            write_FFN(&ffn, f);
+        }
     }
 }
 
@@ -514,7 +559,17 @@ void write_index(const Index* idx, IOWriter* f, int io_flags) {
         WRITE1(idxaqfs->max_train_points);
 
         WRITEVECTOR(idxaqfs->codes);
-    } else if (
+    } else if ( auto* qinco = dynamic_cast<const IndexQINCo*>(idx) ){
+        uint32_t h = fourcc("IxQI");
+        WRITE1(h);
+        write_index_header(idx, f);
+        WRITE1(qinco->M);
+        WRITE1(qinco->nbits);
+        write_Qinco(&qinco->qinco, f);
+        WRITE1(qinco->code_size);
+        WRITEVECTOR(qinco->codes);
+    }
+    else if (
             auto* ivaqfs =
                     dynamic_cast<const IndexIVFAdditiveQuantizerFastScan*>(
                             idx)) {

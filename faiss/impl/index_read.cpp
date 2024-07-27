@@ -46,6 +46,7 @@
 #include <faiss/IndexScalarQuantizer.h>
 #include <faiss/MetaIndexes.h>
 #include <faiss/VectorTransform.h>
+#include <faiss/IndexNeuralNetCodec.h>
 
 #include <faiss/IndexBinaryFlat.h>
 #include <faiss/IndexBinaryFromFloat.h>
@@ -349,6 +350,58 @@ static void read_ProductLocalSearchQuantizer(
         plsq->quantizers.push_back(lsq);
     }
 }
+static void read_Embedding(
+        nn::Embedding* emb,
+        IOReader* f) {
+
+    READ1(emb->num_embeddings);
+    READ1(emb->embedding_dim);
+    READVECTOR(emb->weight);
+}
+
+static void read_Linear(
+        nn::Linear* linear,
+        IOReader* f) {
+
+    READ1(linear->in_features);
+    READ1(linear->out_features);
+    READVECTOR(linear->weight);
+    READVECTOR(linear->bias);
+}
+
+static void read_FFN(
+        nn::FFN* ffn,
+        IOReader* f) {
+
+    read_Linear(&ffn->linear1, f);
+    read_Linear(&ffn->linear2, f);
+}
+
+static void read_Qinco(
+        QINCo* q,
+        IOReader* f) {
+    READ1(q->K);
+    READ1(q->L);
+    READ1(q->h);
+    READ1(q->d);
+    READ1(q->M);
+
+    read_Embedding(&q->codebook0, f);
+    for (int i = 1; i < q->M; i++) {
+        q->steps.emplace_back(0,0,0,0);
+        auto& step = q->steps.back();
+        step.d = q->d;
+        step.K = q->K;
+        step.L = q->L;
+        step.h = q->h;
+        read_Embedding(&step.codebook, f);
+        read_Linear(&step.MLPconcat, f);
+        for (int i = 0; i < q->L; i++) {
+            step.residual_blocks.emplace_back(0, 0);
+            read_FFN(&step.residual_blocks.back(), f);
+        }
+    }
+}
 
 void read_ScalarQuantizer(ScalarQuantizer* ivsc, IOReader* f) {
     READ1(ivsc->qtype);
@@ -634,6 +687,15 @@ Index* read_index(IOReader* f, int io_flags) {
         READ1(idxpl->code_size);
         READVECTOR(idxpl->codes);
         idx = idxpl;
+    } else if (h == fourcc("IxQI")){
+        auto qinco = new IndexQINCo();
+        read_index_header(qinco, f);
+        READ1(qinco->M);
+        READ1(qinco->nbits);
+        read_Qinco(&qinco->qinco, f);
+        READ1(qinco->code_size);
+        READVECTOR(qinco->codes);
+        idx = qinco;
     } else if (h == fourcc("ImRQ")) {
         ResidualCoarseQuantizer* idxr = new ResidualCoarseQuantizer();
         read_index_header(idxr, f);
