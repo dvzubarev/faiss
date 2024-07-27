@@ -17,6 +17,7 @@ namespace faiss {
 struct IndexNeuralNetCodec : IndexFlatCodes {
     NeuralNetCodec* net = nullptr;
     size_t M, nbits;
+    float db_scale;
 
     explicit IndexNeuralNetCodec(
             int d = 0,
