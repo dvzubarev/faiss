@@ -31,6 +31,9 @@
             #for llvm-symbolizer
             pkgs.llvmPackages_18.libllvm
             pkgs.gdb
+
+            (pkgs.python3.withPackages (p: [p.numpy p.pip p.setuptools p.wheel p.packaging p.torch]))
+            pkgs.swig4
           ];
 
           shellHook = ''

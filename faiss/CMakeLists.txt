@@ -123,6 +123,7 @@ set(FAISS_HEADERS
   IndexIVFAdditiveQuantizerFastScan.h
   IndexIVFPQFastScan.h
   IndexIVFPQR.h
+  IndexNeuralNetCodec.h
   IndexIVFSpectralHash.h
   IndexLSH.h
   IndexNeuralNetCodec.h
@@ -231,6 +232,7 @@ set(FAISS_HEADERS
   utils/hamming_distance/neon-inl.h
   utils/hamming_distance/avx2-inl.h
   utils/hamming_distance/avx512-inl.h
+  utils/NeuralNet.h
 )
 
 if(NOT WIN32)

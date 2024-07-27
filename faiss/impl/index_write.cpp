@@ -565,6 +565,7 @@ void write_index(const Index* idx, IOWriter* f, int io_flags) {
         write_index_header(idx, f);
         WRITE1(qinco->M);
         WRITE1(qinco->nbits);
+        WRITE1(qinco->db_scale);
         write_Qinco(&qinco->qinco, f);
         WRITE1(qinco->code_size);
         WRITEVECTOR(qinco->codes);
