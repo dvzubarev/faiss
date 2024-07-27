@@ -72,5 +72,6 @@ IndexQINCo::IndexQINCo(
           qinco(d_in, 1 << nbits_in, L, M_in, h) {
     net = &qinco;
 }
+IndexQINCo::IndexQINCo():IndexQINCo(0,0,0,0,0){}
 
 } // namespace faiss
