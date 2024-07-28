@@ -8,7 +8,7 @@
 }:
 stdenv.mkDerivation {
   pname = "faiss";
-  version = "git";
+  version = "1.9.90";
   inherit src;
 
   buildInputs = [
