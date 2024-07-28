@@ -2,7 +2,7 @@
   description = "faiss";
 
   inputs = {
-    nixpkgs.url = "nixpkgs";
+    nixpkgs.url = "nixpkgs/c19d62ad2265b16e2199c5feb4650fe459ca1c46";
   };
 
   outputs = { self, nixpkgs }:
@@ -11,6 +11,7 @@
           overlays = [ self.overlays.default ];
           config = {
             allowUnfree = true;
+            cudaSupport=true;
           };
         };
     in {
