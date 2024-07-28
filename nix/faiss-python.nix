@@ -14,7 +14,7 @@
 }:
 buildPythonPackage  {
   pname = "pyfaiss";
-  version = "git";
+  version = "1.9.90";
   inherit src;
 
   nativeBuildInputs=[cmake swig4 python3];
