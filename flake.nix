@@ -16,15 +16,26 @@
         };
     in {
       overlays.default = final: prev: {
-        faiss-git = final.callPackage ./nix {src=self;};
+        #cuda supports clang 16 at the moment
+        cuda_llvm_pkgs = pkgs.llvmPackages_16;
+        cuda_gcc_stedenv = pkgs.cudaPackages.backendStdenv;
+
+        faiss-git = final.callPackage ./nix {src=self;
+                                             cudaSupport=true;
+                                             stdenv=final.cuda_gcc_stedenv;};
         faiss-clang-git = final.callPackage ./nix {
           src=self;
-          stdenv = pkgs.llvmPackages_18.stdenv;
-          llvmPackages = pkgs.llvmPackages_18;
+          cudaSupport=true;
+          stdenv = final.cuda_llvm_pkgs.stdenv;
+          llvmPackages = final.cuda_llvm_pkgs;
         };
         python3 = prev.python3.override {
           packageOverrides = pyfinal: pyprev: {
-            faiss-python = pyfinal.callPackage ./nix/faiss-python.nix {src=self;};
+            faiss-python = pyfinal.toPythonModule (pkgs.faiss-git.override {
+              python3Packages=pyfinal;
+              stdenv=final.cuda_gcc_stedenv;
+              cudaSupport=true;
+            });
           };
         };
 
@@ -42,19 +53,20 @@
 
       devShells.x86_64-linux = {
         #dev env with clang compiler
-        default = pkgs.mkShell.override { stdenv = pkgs.llvmPackages_18.stdenv; } {
+        default = pkgs.mkShell.override { stdenv = pkgs.cuda_llvm_pkgs.stdenv; } {
 
           inputsFrom = [pkgs.faiss-clang-git];
           buildInputs = [
             pkgs.ccls_18
             #for llvm-symbolizer
-            pkgs.llvmPackages_18.libllvm
+            pkgs.cuda_llvm_pkgs.libllvm
             pkgs.gdb
 
             (pkgs.python3.withPackages (p: [p.torch]))
           ];
 
           shellHook = ''
+          export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/nvidia/current/:$LD_LIBRARY_PATH
           '';
         };
       };
