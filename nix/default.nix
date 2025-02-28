@@ -12,7 +12,7 @@
 }:
 stdenv.mkDerivation {
   pname = "faiss";
-  version = "1.9.90";
+  version = "1.10.90";
   inherit src;
 
   buildInputs = [
