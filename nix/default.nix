@@ -8,11 +8,12 @@
   swig4,
   cudaSupport ? false,
   cudaPackages,
+  cuvs-bin,
   python3Packages,
 }:
 stdenv.mkDerivation {
   pname = "faiss";
-  version = "1.10.90";
+  version = "1.10.91";
   inherit src;
 
   buildInputs = [
@@ -49,12 +50,14 @@ stdenv.mkDerivation {
     cudaPackages.libcublas.dev
     cudaPackages.cuda_cudart.dev
     cudaPackages.cuda_cccl.dev
+    cuvs-bin
   ];
 
   enableParallelBuilding=true;
   # NIX_CFLAGS_COMPILE = "-fsanitize=address";
   cmakeFlags =[
     (lib.cmakeBool "FAISS_ENABLE_GPU" cudaSupport)
+    (lib.cmakeBool "FAISS_ENABLE_CUVS" cudaSupport)
     "-DCMAKE_BUILD_TYPE=Release"
     "-DBLA_VENDOR=Intel10_64lp"
     "-DFAISS_OPT_LEVEL=avx512"
