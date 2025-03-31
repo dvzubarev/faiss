@@ -16,9 +16,9 @@
         };
     in {
       overlays.default = final: prev: {
-        #cuda supports clang 19 at the moment
+        #cuda supports upto clang-19 at the moment
         #https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
-        cuda_llvm_pkgs = pkgs.llvmPackages;
+        cuda_llvm_pkgs = pkgs.llvmPackages_16;
         cuda_gcc_stedenv = pkgs.cudaPackages.backendStdenv;
 
         faiss-git = final.callPackage ./nix {src=self;

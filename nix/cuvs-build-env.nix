@@ -8,6 +8,7 @@
   git,
   mkl,
   cudaPackages,
+  llvmPackages,
 }:
 stdenv.mkDerivation rec {
   pname = "cuvs";
@@ -30,6 +31,8 @@ stdenv.mkDerivation rec {
     cudaPackages.nccl
     #It is vendored
     # cudaPackages.cuda_cccl
+  ] ++ lib.optionals stdenv.cc.isClang [
+    llvmPackages.openmp
   ];
   cmakeBuildDir="cpp/build";
   cmakeFlags=[
