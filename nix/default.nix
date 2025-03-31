@@ -50,6 +50,7 @@ stdenv.mkDerivation {
     cudaPackages.libcublas.dev
     cudaPackages.cuda_cudart.dev
     cudaPackages.cuda_cccl.dev
+    cudaPackages.libcurand
     cuvs-bin
   ];
 

@@ -298,7 +298,7 @@ if(FAISS_ENABLE_CUVS)
     utils/CuvsUtils.cu
     TARGET_DIRECTORY faiss
     PROPERTIES COMPILE_OPTIONS "-fvisibility=hidden")
-  target_compile_definitions(faiss_gpu_objs PUBLIC USE_NVIDIA_CUVS=1)
+  target_compile_definitions(faiss_gpu_objs PUBLIC USE_NVIDIA_CUVS=1 LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE=1)
 endif()
 
 if (FAISS_ENABLE_ROCM)
