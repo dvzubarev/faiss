@@ -46,6 +46,11 @@
               stdenv=final.cuda_gcc_stedenv;
               cudaSupport=true;
             });
+            faiss-cu11-python = pyfinal.toPythonModule (pkgs.faiss-cu11-git.override {
+              python3Packages=pyfinal;
+              stdenv=pkgs.cudaPackages_11.backendStdenv;
+              cudaSupport=true;
+            });
           };
         };
 
