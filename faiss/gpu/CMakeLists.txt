@@ -349,4 +349,12 @@ else()
     $<$<COMPILE_LANGUAGE:CUDA>:-Xfatbin=-compress-all
     --expt-extended-lambda --expt-relaxed-constexpr
     $<$<BOOL:${FAISS_ENABLE_CUVS}>:-Xcompiler=${OpenMP_CXX_FLAGS}>>)
+
+  if(FAISS_ENABLE_CUVS AND ${CUDAToolkit_VERSION_MAJOR} EQUAL 11)
+    find_package(libcudacxx PATHS "lib/rapids/cmake" CONFIG REQUIRED)
+    if (TARGET libcudacxx::libcudacxx)
+      message(STATUS "Found libcudacxx: ${_libcudacxx_INCLUDE_DIR}")
+    endif()
+    target_include_directories(faiss_gpu_objs PUBLIC ${_libcudacxx_INCLUDE_DIR})
+  endif()
 endif()
