@@ -2,7 +2,7 @@
   description = "faiss";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/bd3bac8bfb542dbde7ffffb6987a1a1f9d41699f";
+    nixpkgs.url = "nixpkgs/99eada0c920f5639d6b64d40592ff28cadcf381a";
   };
 
   outputs = { self, nixpkgs }:
@@ -19,11 +19,12 @@
         #cuda supports upto clang-19 at the moment
         #https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
         cuda_llvm_pkgs = pkgs.llvmPackages_16;
-        cuda_gcc_stedenv = pkgs.cudaPackages.backendStdenv;
+        cuda_gcc_stdenv = pkgs.cudaPackages.backendStdenv;
+        cuda11_gcc_stdenv = pkgs.cudaPackages_11.backendStdenv;
 
         faiss-git = final.callPackage ./nix {src=self;
                                              cudaSupport=true;
-                                             stdenv=final.cuda_gcc_stedenv;};
+                                             stdenv=final.cuda_gcc_stdenv;};
         faiss-cu11-git = final.callPackage ./nix {src=self;
                                                   cudaSupport=true;
                                                   stdenv=pkgs.cudaPackages_11.backendStdenv;
@@ -35,7 +36,9 @@
           stdenv = final.cuda_llvm_pkgs.stdenv;
           llvmPackages = final.cuda_llvm_pkgs;
         };
-        cuvs-build-env = final.callPackage ./nix/cuvs-build-env.nix{stdenv=final.cuda_gcc_stedenv;};
+        cuvs-build-env = final.callPackage ./nix/cuvs-build-env.nix{stdenv=final.cuda_gcc_stdenv;};
+        cuvs-cu11-build-env = final.callPackage ./nix/cuvs-build-env.nix{stdenv=final.cuda11_gcc_stdenv;
+                                                                         cudaPackages=final.cudaPackages_11;};
         cuvs-bin = final.callPackage ./nix/cuvs-bin.nix{};
         cuvs-cu11-bin = final.callPackage ./nix/cuvs-bin.nix{cudaPackages=final.cudaPackages_11;};
 
@@ -43,7 +46,7 @@
           packageOverrides = pyfinal: pyprev: {
             faiss-python = pyfinal.toPythonModule (pkgs.faiss-git.override {
               python3Packages=pyfinal;
-              stdenv=final.cuda_gcc_stedenv;
+              stdenv=final.cuda_gcc_stdenv;
               cudaSupport=true;
             });
             faiss-cu11-python = pyfinal.toPythonModule (pkgs.faiss-cu11-git.override {
@@ -85,8 +88,14 @@
           export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/nvidia/current/:$LD_LIBRARY_PATH
           '';
         };
-        cuvs-build-dev = pkgs.mkShell.override { stdenv = pkgs.cuda_gcc_stedenv; } {
+        cuvs-build-dev = pkgs.mkShell.override { stdenv = pkgs.cuda_gcc_stdenv; } {
           inputsFrom = [pkgs.cuvs-build-env];
+          shellHook = ''
+          export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/nvidia/current/:$LD_LIBRARY_PATH
+          '';
+        };
+        cuvs-cu11-build-dev = pkgs.mkShell.override { stdenv = pkgs.cuda11_gcc_stdenv; } {
+          inputsFrom = [pkgs.cuvs-cu11-build-env];
           shellHook = ''
           export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/nvidia/current/:$LD_LIBRARY_PATH
           '';
