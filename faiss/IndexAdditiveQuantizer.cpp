@@ -215,6 +215,7 @@ FlatCodesDistanceComputer* IndexAdditiveQuantizer::
                 DISPATCH(ST_norm_qint8)
                 DISPATCH(ST_norm_qint4)
                 DISPATCH(ST_norm_cqint4)
+                DISPATCH(ST_norm_from_LUT)
                 case AdditiveQuantizer::ST_norm_cqint8:
                 case AdditiveQuantizer::ST_norm_lsq2x4:
                 case AdditiveQuantizer::ST_norm_rq2x4:
