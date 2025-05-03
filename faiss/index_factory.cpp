@@ -149,6 +149,7 @@ const std::string sq_pattern =
 std::map<std::string, AdditiveQuantizer::Search_type_t> aq_search_type = {
         {"_Nfloat", AdditiveQuantizer::ST_norm_float},
         {"_Nnone", AdditiveQuantizer::ST_LUT_nonorm},
+        {"_Nlut", AdditiveQuantizer::ST_norm_from_LUT},
         {"_Nqint8", AdditiveQuantizer::ST_norm_qint8},
         {"_Nqint4", AdditiveQuantizer::ST_norm_qint4},
         {"_Ncqint8", AdditiveQuantizer::ST_norm_cqint8},
@@ -159,7 +160,7 @@ std::map<std::string, AdditiveQuantizer::Search_type_t> aq_search_type = {
 
 const std::string aq_def_pattern = "[0-9]+x[0-9]+(_[0-9]+x[0-9]+)*";
 const std::string aq_norm_pattern =
-        "(|_Nnone|_Nfloat|_Nqint8|_Nqint4|_Ncqint8|_Ncqint4|_Nlsq2x4|_Nrq2x4)";
+        "(|_Nnone|_Nfloat|_Nlut|_Nqint8|_Nqint4|_Ncqint8|_Ncqint4|_Nlsq2x4|_Nrq2x4)";
 
 const std::string paq_def_pattern = "([0-9]+)x([0-9]+)x([0-9]+)";
 
