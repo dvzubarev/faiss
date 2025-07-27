@@ -71,14 +71,13 @@
 
 
       devShells.x86_64-linux = {
-        #dev env with clang compiler
-        default = pkgs.mkShell.override { stdenv = pkgs.cuda_llvm_pkgs.stdenv; } {
+        default = pkgs.mkShell {
 
-          inputsFrom = [pkgs.faiss-clang-git];
+          inputsFrom = [pkgs.faiss-git];
           buildInputs = [
             pkgs.ccls
             #for llvm-symbolizer
-            pkgs.cuda_llvm_pkgs.libllvm
+            # pkgs.cuda_llvm_pkgs.libllvm
             pkgs.gdb
 
             (pkgs.python3.withPackages (p: [p.torch]))
@@ -86,6 +85,8 @@
 
           shellHook = ''
           export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/nvidia/current/:$LD_LIBRARY_PATH
+          echo "%compile_commands.json" > .ccls
+          echo "--gcc-toolchain=${pkgs.stdenv.cc.cc.outPath}" >> .ccls
           '';
         };
         cuvs-build-dev = pkgs.mkShell.override { stdenv = pkgs.cuda_gcc_stdenv; } {
