@@ -15,6 +15,7 @@
 stdenv.mkDerivation {
   pname = "faiss";
   version = "1.10.91";
+
   inherit src;
 
   buildInputs = [
@@ -39,7 +40,6 @@ stdenv.mkDerivation {
     python3Packages.python
     python3Packages.setuptools
     python3Packages.pip
-    python3Packages.wheel
   ] ++ lib.optionals cudaSupport [
     cudaPackages.cuda_nvcc
   ];
@@ -52,8 +52,6 @@ stdenv.mkDerivation {
     cudaPackages.libcublas.dev
     cudaPackages.cuda_cudart.dev
     cudaPackages.cuda_cccl.dev
-    cudaPackages.libcurand
-    cudaPackages.nccl
     cuvs-bin
   ];
 
@@ -86,10 +84,12 @@ stdenv.mkDerivation {
   mkdir -p $out/${python3Packages.python.sitePackages}
   (cd faiss/python && python -m pip install dist/*.whl --no-index --no-warn-script-location --prefix="$out" --no-cache)
   '';
+
   preFixup = ''
-    d=$out/${python3Packages.python.sitePackages}
+    #for libfaiss_python_callbacks.so
+    py_dir=$out/${python3Packages.python.sitePackages}
     for l in _swigfaiss.so _swigfaiss_avx2.so _swigfaiss_avx512.so ; do
-        patchelf --add-rpath $d/faiss $d/faiss/$l
+        patchelf $py_dir/faiss/$l --add-rpath $py_dir/faiss
     done
   '';
 
