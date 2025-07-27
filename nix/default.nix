@@ -3,6 +3,7 @@
   stdenv,
   lib,
   cmake,
+  gflags,
   mkl,
   llvmPackages,
   swig4,
@@ -18,6 +19,7 @@ stdenv.mkDerivation {
 
   buildInputs = [
     mkl
+    gflags
   ] ++ lib.optionals cudaSupport [
     cudaPackages.cuda_cudart # cuda_runtime.h
     cudaPackages.libcublas
@@ -51,6 +53,7 @@ stdenv.mkDerivation {
     cudaPackages.cuda_cudart.dev
     cudaPackages.cuda_cccl.dev
     cudaPackages.libcurand
+    cudaPackages.nccl
     cuvs-bin
   ];
 

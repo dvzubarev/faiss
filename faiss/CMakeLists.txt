@@ -373,6 +373,10 @@ endif()
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(faiss PRIVATE OpenMP::OpenMP_CXX)
+#for ccls
+message(STATUS "omp head ${OpenMP_CXX_INCLUDE_DIRS} ${OpenMP_CXX_VERSION} " )
+target_include_directories(faiss PUBLIC ${OpenMP_CXX_INCLUDE_DIRS})
+
 target_link_libraries(faiss_avx2 PRIVATE OpenMP::OpenMP_CXX)
 target_link_libraries(faiss_avx512 PRIVATE OpenMP::OpenMP_CXX)
 target_link_libraries(faiss_avx512_spr PRIVATE OpenMP::OpenMP_CXX)
