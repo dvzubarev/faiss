@@ -374,6 +374,7 @@ set(FAISS_HEADERS
   utils/fp16.h
   utils/hamming-inl.h
   utils/hamming.h
+  utils/popcount.h
   utils/ordered_key_value.h
   utils/partitioning.h
   utils/prefetch.h
@@ -714,10 +715,10 @@ target_link_libraries(faiss PRIVATE OpenMP::OpenMP_CXX)
 message(STATUS "omp head ${OpenMP_CXX_INCLUDE_DIRS} ${OpenMP_CXX_VERSION} " )
 target_include_directories(faiss PUBLIC ${OpenMP_CXX_INCLUDE_DIRS})
 
-target_link_libraries(faiss_avx2 PRIVATE OpenMP::OpenMP_CXX)
-target_link_libraries(faiss_avx512 PRIVATE OpenMP::OpenMP_CXX)
-target_link_libraries(faiss_avx512_spr PRIVATE OpenMP::OpenMP_CXX)
-target_link_libraries(faiss_sve PRIVATE OpenMP::OpenMP_CXX)
+target_link_libraries(faiss_avx2 PRIVATE OpenMP::OpenMP_CXX INTERFACE cuvs::cuvs)
+target_link_libraries(faiss_avx512 PRIVATE OpenMP::OpenMP_CXX INTERFACE cuvs::cuvs)
+target_link_libraries(faiss_avx512_spr PRIVATE OpenMP::OpenMP_CXX INTERFACE cuvs::cuvs)
+target_link_libraries(faiss_sve PRIVATE OpenMP::OpenMP_CXX INTERFACE cuvs::cuvs)
 
 if(FAISS_ENABLE_MKL)
   find_package(MKL)

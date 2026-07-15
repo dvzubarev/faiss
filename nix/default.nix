@@ -25,7 +25,6 @@ stdenv.mkDerivation {
     cudaPackages.cuda_cudart # cuda_runtime.h
     cudaPackages.libcublas
     cudaPackages.libcurand
-    cudaPackages.cccl
     # cuda_profiler_api.h
     (cudaPackages.cuda_profiler_api or cudaPackages.cuda_nvprof)
   ] ++
@@ -48,11 +47,11 @@ stdenv.mkDerivation {
     python3Packages.numpy
     python3Packages.packaging
   ] ++ lib.optionals cudaSupport [
+    cuvs-bin
     cudaPackages.cuda_nvcc
     cudaPackages.libcublas.dev
     cudaPackages.cuda_cudart
-    cudaPackages.cccl
-    cuvs-bin
+    # cudaPackages.cccl
   ];
 
   enableParallelBuilding=true;
