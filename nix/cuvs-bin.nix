@@ -8,16 +8,16 @@
 }:
 let
   hash_per_cu_version = {
+    "12.9" = "3d7532ae72d391e50d50bc977b12b9720cd885bd171fc2af62752e3e0649cff0";
     "12.8" = "d53546f9cf76a6351fda6f95e8abdf0bd4c25df62a7ed9c061ada24bcaf1e618";
-    "11.8" = "bd347a6a6aca252fe5cd85da2ea7dcc9e8e693858c9aa88d8e55a5ba912d37c2";
   };
 in
 stdenv.mkDerivation rec {
   pname = "cuvs-bin";
-  version = "25.04.02";
+  version = "26.06.00";
   src = fetchurl {
-    url = "http://dn11.isa.ru:8080/thirdparty/cuvs-v${version}-cuda${cudaPackages.cudaVersion}.tar.gz";
-    sha256= hash_per_cu_version.${cudaPackages.cudaVersion} or (throw "No pre-built cuvs binaries for cuda ${cudaPackages.cudaVersion}");
+    url = "http://dn11.isa.ru:8080/thirdparty/cuvs-v${version}-cuda${cudaPackages.cudaMajorMinorVersion}.tar.gz";
+    sha256= hash_per_cu_version.${cudaPackages.cudaMajorMinorVersion} or (throw "No pre-built cuvs binaries for cuda ${cudaPackages.cudaMajorMinorVersion}");
   };
 
   buildPhase = ''
@@ -36,6 +36,8 @@ stdenv.mkDerivation rec {
         cudaPackages.libcusparse
         cudaPackages.libcurand
         cudaPackages.nccl
+        cudaPackages.libnvjitlink
+        cudaPackages.cuda_nvrtc
       ];
     in
       ''

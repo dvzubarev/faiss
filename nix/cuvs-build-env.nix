@@ -12,12 +12,12 @@
 }:
 stdenv.mkDerivation rec {
   pname = "cuvs";
-  version = "25.04.90";
+  version = "26.06.00";
   src = fetchFromGitHub {
     owner = "rapidsai";
     repo = "cuvs";
-    rev = "ff8682798536b5975f47ac86b3f3d2e2c801904b";
-    sha256 = "0h03qflibvwsgbqi49pikhfxz8snkf26pdn3w6w6ndj6h4zr6i05";
+    rev = "2bd7cd71d31e39eb9ee00c2a250085a1afb84977";
+    sha256 = "0000000000000000000000000000000000000000000000000000";
   };
 
   nativeBuildInputs = [ cmake cudaPackages.cuda_nvcc git ];
@@ -29,6 +29,8 @@ stdenv.mkDerivation rec {
     cudaPackages.libcusolver
     cudaPackages.libcusparse
     cudaPackages.nccl
+    cudaPackages.libnvjitlink
+    cudaPackages.cuda_nvrtc
     #It is vendored
     # cudaPackages.cuda_cccl
   ] ++ lib.optionals stdenv.cc.isClang [

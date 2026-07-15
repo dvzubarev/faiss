@@ -6,7 +6,7 @@
   gflags,
   mkl,
   llvmPackages,
-  swig4,
+  swig,
   cudaSupport ? false,
   cudaPackages,
   cuvs-bin,
@@ -14,7 +14,7 @@
 }:
 stdenv.mkDerivation {
   pname = "faiss";
-  version = "1.10.91";
+  version = "1.14.3";
 
   inherit src;
 
@@ -25,7 +25,7 @@ stdenv.mkDerivation {
     cudaPackages.cuda_cudart # cuda_runtime.h
     cudaPackages.libcublas
     cudaPackages.libcurand
-    cudaPackages.cuda_cccl
+    cudaPackages.cccl
     # cuda_profiler_api.h
     (cudaPackages.cuda_profiler_api or cudaPackages.cuda_nvprof)
   ] ++
@@ -35,7 +35,7 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     cmake
-    swig4
+    swig
 
     python3Packages.python
     python3Packages.setuptools
@@ -50,8 +50,8 @@ stdenv.mkDerivation {
   ] ++ lib.optionals cudaSupport [
     cudaPackages.cuda_nvcc
     cudaPackages.libcublas.dev
-    cudaPackages.cuda_cudart.dev
-    cudaPackages.cuda_cccl.dev
+    cudaPackages.cuda_cudart
+    cudaPackages.cccl
     cuvs-bin
   ];
 

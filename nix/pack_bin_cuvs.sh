@@ -7,7 +7,8 @@
 
 #Rough list of command to compile and pack cuvs:
 #
-#Call `nix develop .#cuvs-build-dev` and go to cuvs source directory `cuvs/cpp/build`
+#checkout latest release of cuvs, for example in ../cuvs directory.
+#Call `nix develop .#cuvs-build-dev` and go to cuvs source directory `../cuvs/cpp/build`
 #Configure cuvs with cmake command
 #cmake -DCMAKE_CUDA_ARCHITECTURES:STRING=70\;75\;80 -DCMAKE_INSTALL_PREFIX=$(pwd)/../cuvs-bin \
 #-DBUILD_TESTS=OFF -DDETECT_CONDA_ENV=OFF -DCUVS_COMPILE_DYNAMIC_ONLY=ON -DCUVS_USE_RAFT_STATIC=ON  ..
@@ -22,9 +23,11 @@
 
 cd ../
 
-tar cfz cuvs-v25.04.02-cuda12.8.tar.gz cuvs-bin
-aw s3 cp cuvs-v25.04.02-cuda12.8.tar.gz  s3://thirdparty/
-aw s3api put-object-tagging --bucket thirdparty --key cuvs-v25.04.02-cuda12.8.tar.gz --tagging 'TagSet={Key=public,Value=yes}'
+#Change archive name!
+archive=cuvs-v26.06.00-cuda12.9.tar.gz
+tar cfz $archive cuvs-bin
+aw s3 cp $archive  s3://thirdparty/
+aw s3api put-object-tagging --bucket thirdparty --key $archive --tagging 'TagSet={Key=public,Value=yes}'
 
 #change cuvs-bin.nix after uploading new version.
 #Do not forget to change sha256.
