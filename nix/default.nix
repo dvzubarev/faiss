@@ -61,9 +61,7 @@ stdenv.mkDerivation {
     (lib.cmakeBool "FAISS_ENABLE_CUVS" cudaSupport)
     "-DCMAKE_BUILD_TYPE=Release"
     "-DBLA_VENDOR=Intel10_64lp"
-    "-DFAISS_OPT_LEVEL=avx512"
-    # "-DFAISS_OPT_LEVEL=avx2"
-    # "-DFAISS_OPT_LEVEL=generic"
+    "-DFAISS_OPT_LEVEL=dd"
     "-DFAISS_ENABLE_PYTHON=ON"
     "-DBUILD_SHARED_LIBS=ON"
     "-DBUILD_TESTING=OFF"
